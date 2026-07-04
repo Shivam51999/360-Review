@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mangalam 360° Review</title>
+<style>
+  :root {
+    --ink: #1c2430;
+    --ink-soft: #4a5568;
+    --paper: #f6f5f1;
+    --card: #ffffff;
+    --line: #e2e1d9;
+    --navy: #1f3a5f;
+    --navy-deep: #142a45;
+    --brass: #b8862f;
+    --brass-soft: #f1e6cf;
+    --good: #2f6d4f;
+    --warn: #a5471f;
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(20,42,69,0.08), 0 1px 2px rgba(20,42,69,0.06);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .topbar {
+    background: var(--navy-deep);
+    color: #fff;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .topbar .brand {
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #cbd8e8;
+    font-weight: 600;
+  }
+  .topbar h1 {
+    font-size: 20px;
+    margin: 2px 0 0;
+    font-weight: 700;
+  }
+  .topbar .quarter-pill {
+    background: rgba(184,134,47,0.18);
+    border: 1px solid rgba(184,134,47,0.5);
+    color: #f1d9a6;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .container { max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+  }
+  .center-card { max-width: 420px; margin: 60px auto; text-align: center; }
+  .center-card h2 { margin-top: 0; font-size: 19px; }
+  .center-card p { color: var(--ink-soft); font-size: 14px; }
+  input[type=text], input[type=email], input[type=password], textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cfcdc0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fff;
+    color: var(--ink);
+  }
+  textarea { resize: vertical; min-height: 70px; }
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 18px;
+    transition: transform 0.05s ease, opacity 0.15s ease;
+  }
+  button:active { transform: scale(0.98); }
+  .btn-primary { background: var(--navy); color: #fff; }
+  .btn-primary:hover { background: var(--navy-deep); }
+  .btn-secondary { background: #efece2; color: var(--ink); }
+  .btn-outline { background: transparent; color: var(--navy); border: 1px solid var(--navy); }
+  .btn-small { padding: 6px 12px; font-size: 13px; }
+  .btn-disabled { background: #e6e4da; color: #999; cursor: default; }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .stack { display: flex; flex-direction: column; gap: 8px; }
+  .error-box {
+    background: #fbe9e2; border: 1px solid #e6b49b; color: var(--warn);
+    padding: 10px 14px; border-radius: 8px; font-size: 13.5px; margin-top: 12px;
+  }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--navy-deep); color: #fff; padding: 12px 20px; border-radius: 8px;
+    font-size: 14px; box-shadow: var(--shadow); z-index: 999; opacity: 0; transition: opacity 0.25s;
+  }
+  .toast.show { opacity: 1; }
+
+  .greeting { margin-bottom: 22px; }
+  .greeting .name { font-size: 22px; font-weight: 700; }
+  .greeting .dept { color: var(--ink-soft); font-size: 14px; }
+
+  .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 26px; }
+  .category-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px; cursor: pointer; box-shadow: var(--shadow); transition: border-color 0.15s;
+  }
+  .category-card:hover { border-color: var(--navy); }
+  .category-card.active { border-color: var(--brass); box-shadow: 0 0 0 2px var(--brass-soft); }
+  .category-card .cat-label { font-size: 13.5px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+  .progress-track { background: #eceae0; border-radius: 999px; height: 8px; overflow: hidden; margin-bottom: 8px; }
+  .progress-fill { background: linear-gradient(90deg, var(--brass), #d6a856); height: 100%; border-radius: 999px; }
+  .cat-count { font-size: 13px; color: var(--ink-soft); }
+
+  .assignee-list { display: flex; flex-direction: column; gap: 10px; }
+  .assignee-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px;
+  }
+  .assignee-row.completed { background: #f4f8f5; border-color: #cfe3d5; }
+  .assignee-name { font-weight: 600; font-size: 14.5px; }
+  .assignee-dept { font-size: 12.5px; color: var(--ink-soft); }
+  .badge-done { color: var(--good); font-size: 12.5px; font-weight: 700; }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(20,30,45,0.55);
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 40px 16px; overflow-y: auto; z-index: 500;
+  }
+  .modal {
+    background: #fff; border-radius: 14px; max-width: 640px; width: 100%;
+    padding: 28px; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  }
+  .modal h3 { margin-top: 0; font-size: 18px; }
+  .modal .sub { color: var(--ink-soft); font-size: 13.5px; margin-bottom: 20px; }
+  .question-block { margin-bottom: 20px; }
+  .question-text { font-size: 14.5px; font-weight: 600; margin-bottom: 4px; }
+  .question-text-mr { font-size: 13px; color: var(--ink-soft); margin-bottom: 10px; }
+  .scale-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .scale-btn {
+    width: 34px; height: 34px; border-radius: 8px; border: 1px solid #cfcdc0;
+    background: #fff; font-weight: 600; font-size: 13px; color: var(--ink);
+  }
+  .scale-btn.selected { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .scale-caption { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--ink-soft); margin-top: 4px; }
+  .choice-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .choice-btn { border: 1px solid #cfcdc0; background: #fff; padding: 8px 14px; border-radius: 999px; font-size: 13px; }
+  .choice-btn.selected { background: var(--brass); color: #fff; border-color: var(--brass); }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--line); }
+  .tab-btn { background: transparent; border-radius: 8px 8px 0 0; padding: 10px 16px; color: var(--ink-soft); font-size: 14px; }
+  .tab-btn.active { background: #fff; color: var(--navy); border: 1px solid var(--line); border-bottom-color: #fff; margin-bottom: -1px; font-weight: 700; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .stat-box { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  .stat-box .big { font-size: 26px; font-weight: 800; color: var(--navy); }
+  .stat-box .label { font-size: 12.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  .dash-section { margin-bottom: 30px; }
+  .dash-section h3 { font-size: 15.5px; margin-bottom: 12px; color: var(--navy-deep); }
+  table.dash-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.dash-table th, table.dash-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  table.dash-table th { color: var(--ink-soft); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .remark { background: #fbfaf5; border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; font-size: 13.5px; }
+  .remark .who { font-weight: 700; color: var(--navy); }
+
+  .footer-link { text-align: center; margin-top: 30px; }
+  .footer-link a { color: var(--ink-soft); font-size: 12.5px; text-decoration: none; }
+  .spinner { border: 3px solid #eee; border-top-color: var(--navy); border-radius: 50%; width: 22px; height: 22px; animation: spin 0.7s linear infinite; margin: 0 auto; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="brand">Mangalam HQ</div>
+    <h1>360° Performance Review</h1>
+  </div>
+  <div id="quarterPill" class="quarter-pill">Loading…</div>
+</div>
+
+<div class="container" id="app">
+  <div class="center-card card">
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ============ CONFIG ============ */
+const CONFIG = {
+  // Paste the Apps Script Web App /exec URL here after deployment.
+  API_URL: 'https://script.google.com/macros/s/PUT_YOUR_DEPLOYMENT_ID_HERE/exec',
+};
+
+/* ============ JSONP helper (matches existing Mangalam HQ tools) ============ */
+let __jsonpCounter = 0;
+function jsonp(params) {
+  return new Promise((resolve, reject) => {
+    const cbName = '__pms360_cb_' + (__jsonpCounter++);
+    const script = document.createElement('script');
+    const qs = Object.keys(params).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k])).join('&');
+    window[cbName] = (data) => {
+      resolve(data);
+      delete window[cbName];
+      script.remove();
+    };
+    script.src = CONFIG.API_URL + '?' + qs + '&callback=' + cbName;
+    script.onerror = () => reject(new Error('Network error contacting the review server.'));
+    document.body.appendChild(script);
+    setTimeout(() => { if (window[cbName]) { reject(new Error('Request timed out.')); delete window[cbName]; script.remove(); } }, 20000);
+  });
+}
+
+/* ============ App State ============ */
+const state = {
+  email: sessionStorage.getItem('pms360_email') || '',
+  assignments: null,
+  questions: null,
+  activeCategory: null,
+  view: 'portal', // 'portal' | 'admin'
+};
+
+const appEl = document.getElementById('app');
+const quarterPill = document.getElementById('quarterPill');
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
+/* ============ Boot ============ */
+async function boot() {
+  try {
+    const ping = await jsonp({ action: 'ping' });
+    quarterPill.textContent = ping.quarter || '';
+  } catch (e) { quarterPill.textContent = ''; }
+
+  if (state.email) {
+    loadPortal();
+  } else {
+    renderLogin();
+  }
+}
+
+/* ============ Login ============ */
+function renderLogin() {
+  appEl.innerHTML = `
+    <div class="center-card card">
+      <h2>Sign in to submit your reviews</h2>
+      <p>Enter your official Mangalam email address. Your review assignments are matched against the PMS mapping automatically.</p>
+      <div class="stack">
+        <input type="email" id="emailInput" placeholder="you@mangalam.co.in" />
+        <button class="btn-primary" id="loginBtn">Continue</button>
+      </div>
+      <div id="loginError"></div>
+      <div class="footer-link"><a href="#" id="adminLink">Management dashboard →</a></div>
+    </div>
+  `;
+  document.getElementById('loginBtn').onclick = doLogin;
+  document.getElementById('emailInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('adminLink').onclick = (e) => { e.preventDefault(); renderAdminLogin(); };
+}
+
+async function doLogin() {
+  const email = document.getElementById('emailInput').value.trim();
+  const errEl = document.getElementById('loginError');
+  errEl.innerHTML = '';
+  if (!email) return;
+  document.getElementById('loginBtn').textContent = 'Checking…';
+  try {
+    const res = await jsonp({ action: 'getAssignments', email });
+    if (!res.ok) {
+      errEl.innerHTML = `<div class="error-box">${esc(res.error)}</div>`;
+      document.getElementById('loginBtn').textContent = 'Continue';
+      return;
+    }
+    state.email = email;
+    sessionStorage.setItem('pms360_email', email);
+    state.assignments = res;
+    loadPortal();
+  } catch (e) {
+    errEl.innerHTML = `<div class="error-box">${esc(e.message)}</div>`;
+    document.getElementById('loginBtn').textContent = 'Continue';
+  }
+}
+
+/* ============ Portal ============ */
+async function loadPortal() {
+  appEl.innerHTML = `<div class="card center-card"><div class="spinner"></div></div>`;
+  try {
+    const [assignments, questions] = await Promise.all([
+      jsonp({ action: 'getAssignments', email: state.email }),
+      state.questions ? Promise.resolve({ ok: true, questions: state.questions }) : jsonp({ action: 'getQuestions' }),
+    ]);
+    if (!assignments.ok) {
+      sessionStorage.removeItem('pms360_email');
+      state.email = '';
+      renderLogin();
+      showToast(assignments.error || 'Could not load your assignments.');
+      return;
+    }
+    state.assignments = assignments;
+    state.questions = questions.questions;
+    if (!state.activeCategory) state.activeCategory = assignments.categories[0].type;
+    renderPortal();
+  } catch (e) {
+    appEl.innerHTML = `<div class="card center-card"><p class="error-box">${esc(e.message)}</p><button class="btn-secondary" onclick="location.reload()">Retry</button></div>`;
+  }
+}
+
+function renderPortal() {
+  const a = state.assignments;
+  const cats = a.categories;
+  const active = cats.find(c => c.type === state.activeCategory) || cats[0];
+
+  appEl.innerHTML = `
+    <div class="greeting">
+      <div class="name">${esc(a.assessor.name)}</div>
+      <div class="dept">${esc(a.assessor.department)} · ${esc(a.quarter)}</div>
+    </div>
+
+    <div class="category-grid" id="catGrid"></div>
+
+    <div class="card">
+      <div class="cat-label" style="color:var(--navy); font-weight:700; margin-bottom:14px; font-size:15px;">
+        ${esc(active.label)} — ${active.completedCount}/${active.total} completed
+      </div>
+      <div class="assignee-list" id="assigneeList"></div>
+    </div>
+
+    <div class="footer-link"><a href="#" id="logoutLink">Switch account</a> · <a href="#" id="adminLink2">Management dashboard</a></div>
+  `;
+
+  const grid = document.getElementById('catGrid');
+  cats.forEach(c => {
+    const pct = c.total ? Math.round((c.completedCount / c.total) * 100) : 100;
+    const div = document.createElement('div');
+    div.className = 'category-card' + (c.type === active.type ? ' active' : '');
+    div.innerHTML = `
+      <div class="cat-label">${esc(c.label)}</div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="cat-count">${c.completedCount} of ${c.total} completed</div>
+    `;
+    div.onclick = () => { state.activeCategory = c.type; renderPortal(); };
+    grid.appendChild(div);
+  });
+
+  const list = document.getElementById('assigneeList');
+  if (!active.assignees.length) {
+    list.innerHTML = `<div class="cat-count">No one assigned to you in this category for the current cycle.</div>`;
+  }
+  active.assignees.forEach(person => {
+    const row = document.createElement('div');
+    row.className = 'assignee-row' + (person.completed ? ' completed' : '');
+    row.innerHTML = `
+      <div>
+        <div class="assignee-name">${esc(person.assesseeName)}</div>
+        <div class="assignee-dept">${esc(person.assesseeDepartment || '')}</div>
+      </div>
+      <div class="row">
+        ${person.completed ? '<span class="badge-done">✓ Submitted</span>' : ''}
+        <button class="btn-small ${person.completed ? 'btn-outline' : 'btn-primary'}" data-id="${esc(person.assesseeId)}">
+          ${person.completed ? 'Edit response' : 'Review'}
+        </button>
+      </div>
+    `;
+    row.querySelector('button').onclick = () => openReviewModal(active, person);
+    list.appendChild(row);
+  });
+
+  document.getElementById('logoutLink').onclick = (e) => {
+    e.preventDefault();
+    sessionStorage.removeItem('pms360_email');
+    state.email = '';
+    state.assignments = null;
+    renderLogin();
+  };
+  document.getElementById('adminLink2').onclick = (e) => { e.preventDefault(); renderAdminLogin(); };
+}
+
+/* ============ Review Modal ============ */
+function openReviewModal(category, person) {
+  const questions = state.questions[category.type];
+  const answers = {};
+
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop';
+  backdrop.innerHTML = `
+    <div class="modal">
+      <h3>${esc(category.label)}</h3>
+      <div class="sub">Reviewing: <strong>${esc(person.assesseeName)}</strong>${person.assesseeDepartment ? ' · ' + esc(person.assesseeDepartment) : ''}</div>
+      <div id="qContainer"></div>
+      <div id="modalError"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancelBtn">Cancel</button>
+        <button class="btn-primary" id="saveBtn">Save review</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(backdrop);
+
+  const qContainer = backdrop.querySelector('#qContainer');
+  let commentsValue = '';
+
+  questions.forEach(q => {
+    const block = document.createElement('div');
+    block.className = 'question-block';
+
+    if (q.type === 'scale') {
+      const labels = q.scaleLabels || ['Not at all likely', 'Extremely likely'];
+      block.innerHTML = `
+        <div class="question-text">${esc(q.text)}</div>
+        <div class="question-text-mr">${esc(q.textMr || '')}</div>
+        <div class="scale-row" data-qid="${q.id}"></div>
+        <div class="scale-caption"><span>${esc(labels[0])}</span><span>${esc(labels[1])}</span></div>
+      `;
+      qContainer.appendChild(block);
+      const row = block.querySelector('.scale-row');
+      for (let i = 1; i <= 10; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'scale-btn';
+        btn.textContent = i;
+        btn.onclick = () => {
+          answers[q.id] = i;
+          row.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+        };
+        row.appendChild(btn);
+      }
+    } else if (q.type === 'choice') {
+      block.innerHTML = `
+        <div class="question-text">${esc(q.text)}</div>
+        <div class="question-text-mr">${esc(q.textMr || '')}</div>
+        <div class="choice-row" data-qid="${q.id}"></div>
+      `;
+      qContainer.appendChild(block);
+      const row = block.querySelector('.choice-row');
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'choice-btn';
+        btn.textContent = opt;
+        btn.onclick = () => {
+          answers[q.id] = opt;
+          row.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+        };
+        row.appendChild(btn);
+      });
+    } else if (q.type === 'text') {
+      block.innerHTML = `
+        <div class="question-text">${esc(q.text)}</div>
+        <div class="question-text-mr">${esc(q.textMr || '')}</div>
+        <textarea data-qid="${q.id}" placeholder="Type your comments…"></textarea>
+      `;
+      qContainer.appendChild(block);
+      block.querySelector('textarea').addEventListener('input', (e) => {
+        commentsValue = e.target.value;
+      });
+    }
+    block.dataset.required = q.required !== false && q.type !== 'text' ? 'true' : (q.required ? 'true' : 'false');
+  });
+
+  backdrop.querySelector('#cancelBtn').onclick = () => backdrop.remove();
+  backdrop.querySelector('#saveBtn').onclick = async () => {
+    const missing = questions.filter(q => q.type !== 'text' && answers[q.id] === undefined);
+    const errEl = backdrop.querySelector('#modalError');
+    if (missing.length) {
+      errEl.innerHTML = `<div class="error-box">Please answer all rating questions before saving.</div>`;
+      return;
+    }
+    const saveBtn = backdrop.querySelector('#saveBtn');
+    saveBtn.textContent = 'Saving…';
+    saveBtn.disabled = true;
+    try {
+      const payload = {
+        type: category.type,
+        assessorEmail: state.email,
+        assesseeId: person.assesseeId,
+        answers,
+        comments: commentsValue,
+      };
+      const res = await jsonp({ action: 'submitReview', payload: JSON.stringify(payload) });
+      if (!res.ok) {
+        errEl.innerHTML = `<div class="error-box">${esc(res.error)}</div>`;
+        saveBtn.textContent = 'Save review';
+        saveBtn.disabled = false;
+        return;
+      }
+      backdrop.remove();
+      showToast('Saved — thank you.');
+      loadPortal();
+    } catch (e) {
+      errEl.innerHTML = `<div class="error-box">${esc(e.message)}</div>`;
+      saveBtn.textContent = 'Save review';
+      saveBtn.disabled = false;
+    }
+  };
+}
+</script>
+
+<script src="dashboard.js"></script>
+<script>boot();</script>
+</body>
+</html>
